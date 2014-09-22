@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<!-- Shaders -->
 	<script id="vertexShader" type="x-shader/x-vertex">
 #ifdef GL_ES
 		precision highp float;
@@ -57,19 +56,19 @@
         
         //** do color shifts here..
         
-        float red = lms[0];
-        float green = lms[1];
+        float red = rgb[0];
+        float green = rgb[1];
         
-        float tweak = 10.0/(red - green);
+        float tweak = 0.01/(red - green);
         
         if (tweak < 0.1)
         {
-            lms[0] += tweak;
-            lms[1] -= tweak;
+            rgb[0] += tweak;
+            rgb[1] -= tweak;
         }
         //**
         
-        rgb = LMStoRGB(lms);
+        //rgb = LMStoRGB(lms);
     
         pxl.xyz = rgb;
         gl_FragColor = pxl;
@@ -86,7 +85,7 @@
         // Initialize WebGL Renderer
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        var canvas = document.body.appendChild(renderer.domElement);
+        document.body.appendChild(renderer.domElement);
 
         // Initialize Scenes
         scene = new THREE.Scene();
@@ -105,6 +104,7 @@
         // Init Mesh
         var plane = new THREE.PlaneGeometry(80, 80);
         var mesh = new THREE.Mesh( plane, material );
+        
         scene.add( mesh );
     }
         
