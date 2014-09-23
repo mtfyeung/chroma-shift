@@ -26,6 +26,7 @@
 
     varying vec2 vUv;
     
+    /*
     vec3 RGBtoLMS(vec3 v)
     {
         mat3 m = mat3(
@@ -47,51 +48,24 @@
     
         return m * v;
     }
+    */
 
     void main() {
         vec4 pxl = texture2D(texture1, vUv);
         
         vec3 rgb = pxl.xyz;
-        vec3 lms = RGBtoLMS(rgb); 
         
         //** do color shifts here..
         
         float red = rgb[0];
         float green = rgb[1];
         
-        float diff = abs(red - green);
-        
-        
-        const float threshold = 0.25;
-        if (diff < threshold)
-        {
-            if (red > green)
-            {
-                if (red < 0.5 + threshold)
-                {
-                    rgb[0] += threshold;
-                }
-                else
-                {
-                    rgb[1] -= threshold;
-                }
-            }
-            else
-            {
-                if (green < 0.5 + threshold)
-                {
-                    rgb[1] += threshold;
-                }
-                else
-                {
-                    rgb[0] -= threshold;
-                }
-            }
-        }
+        float diff = red - green;
+
+        rgb[0] += diff;
+        rgb[1] -= diff;
         
         //**
-        
-        //rgb = LMStoRGB(lms);
     
         pxl.xyz = rgb;
         gl_FragColor = pxl;
