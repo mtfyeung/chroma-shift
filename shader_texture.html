@@ -59,13 +59,36 @@
         float red = rgb[0];
         float green = rgb[1];
         
-        float tweak = 0.01/(red - green);
+        float diff = abs(red - green);
         
-        if (tweak < 0.1)
+        
+        const float threshold = 0.25;
+        if (diff < threshold)
         {
-            rgb[0] += tweak;
-            rgb[1] -= tweak;
+            if (red > green)
+            {
+                if (red < 0.5 + threshold)
+                {
+                    rgb[0] += threshold;
+                }
+                else
+                {
+                    rgb[1] -= threshold;
+                }
+            }
+            else
+            {
+                if (green < 0.5 + threshold)
+                {
+                    rgb[1] += threshold;
+                }
+                else
+                {
+                    rgb[0] -= threshold;
+                }
+            }
         }
+        
         //**
         
         //rgb = LMStoRGB(lms);
