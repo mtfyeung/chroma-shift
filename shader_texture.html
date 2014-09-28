@@ -2,9 +2,7 @@
 <html>
 <head>
 	<script id="vertexShader" type="x-shader/x-vertex">
-#ifdef GL_ES
-		precision highp float;
-#endif
+    precision highp float;
 
     varying vec2 vUv;
 
@@ -18,37 +16,11 @@
     </script>
 
 	<script id="fragmentShader" type="x-shader/x-fragment">
-#ifdef GL_ES
-		precision highp float;
-#endif
+    precision highp float;
 
     uniform sampler2D texture1;
 
     varying vec2 vUv;
-    
-    /*
-    vec3 RGBtoLMS(vec3 v)
-    {
-        mat3 m = mat3(
-            0.313988, 0.155371, 0.0177525,
-            0.63952, 0.757903, 0.109443,
-            0.0464937, 0.0866942, 0.872498
-        );
-    
-        return m * v;
-    }
-    
-    vec3 LMStoRGB(vec3 v)
-    {
-        mat3 m = mat3(
-            5.47226, -1.12523, 0.029802,
-            -4.642, 2.29314, -0.167893,
-            0.029802, -0.193194, 1.16374
-        );
-    
-        return m * v;
-    }
-    */
 
     void main() {
         vec4 pxl = texture2D(texture1, vUv);
@@ -72,7 +44,7 @@
     }
     </script>
   
-    <script src="three.min.js"></script>
+    <script src="http://threejs.org/build/three.min.js"></script>
 
     <script>
     var renderer, scene, camera;
