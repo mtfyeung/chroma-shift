@@ -7,10 +7,7 @@
 
     void main() {
         vUv = uv;
-
-        gl_Position =   projectionMatrix * 
-                        modelViewMatrix * 
-                        vec4(position,1.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
     }
     </script>
 
@@ -48,10 +45,9 @@
     <script>
     var renderer, scene, camera;
     var video, vtexture;
-        
-    function init()
+
+    function init_video()
     {
-        // Initialize Video
         video = document.createElement('video');
         video.autoplay = true;
         video.loop = true;
@@ -65,12 +61,17 @@
         });
         
         vtexture = new THREE.Texture(video);
-        
-        // Initialize WebGL Renderer
+    }
+       
+    function init_renderer()
+    {
         renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-
+    }
+        
+    function init_contents()
+    {
         // Initialize Scenes
         scene = new THREE.Scene();
 
@@ -90,25 +91,29 @@
         var mesh = new THREE.Mesh( plane, material );
         
         scene.add( mesh );
+    }
+        
+    function init()
+    {
+        init_video();        
+        init_renderer();        
+        init_contents();
     }        
         
-    function animate() {
-
+    function animate()
+    {
         if (video.readyState === video.HAVE_ENOUGH_DATA)
         {
             vtexture.needsUpdate = true;
-		}
+        }
         
         requestAnimationFrame( animate );
 
         renderer.render( scene, camera );
-
     }
         
-	document.addEventListener("DOMContentLoaded", function(event) {
-
-        init();
-        
+	document.addEventListener("DOMContentLoaded", function(event){
+        init();        
         animate();
     });
     </script>
