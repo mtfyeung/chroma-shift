@@ -15,6 +15,7 @@
     precision highp float;
 
     uniform sampler2D texture1;
+    uniform float multiplier;
 
     varying vec2 vUv;
 
@@ -28,7 +29,7 @@
         float red = rgb[0];
         float green = rgb[1];
         
-        float diff = red - green;
+        float diff = multiplier*(red - green);
 
         rgb[0] += diff;
         rgb[1] -= diff;
@@ -41,10 +42,19 @@
     </script>
   
     <script src="http://threejs.org/build/three.min.js"></script>
+    <script src="https://rawgit.com/dataarts/dat.gui/master/build/dat.gui.min.js"></script>
 
     <script>
     var renderer, scene, camera;
     var video, vtexture;
+    var controls;
+    var material;
+
+    function ControlState()
+    {
+        this.multiplier = 1.0;
+    }
+            
 
     function init_video()
     {
@@ -80,8 +90,10 @@
         camera.position.z = 300;
 
         // Initialize Shaders
-        var material = new THREE.ShaderMaterial({
-            uniforms: { texture1: { type: "t", value: vtexture }},
+        material = new THREE.ShaderMaterial({
+            uniforms: {
+                texture1: { type: "t", value: vtexture },
+                multiplier : { type: "f", value: 1.0 }},
             vertexShader: document.getElementById('vertexShader').innerHTML,
             fragmentShader: document.getElementById('fragmentShader').innerHTML
         });
@@ -93,21 +105,32 @@
         scene.add( mesh );
     }
         
+    function init_gui()
+    {
+        controls = new ControlState();
+        gui = new dat.GUI();
+        gui.add(controls, 'multiplier', 0, 5);
+    }
+            
+        
     function init()
     {
         init_video();        
-        init_renderer();        
+        init_renderer();
         init_contents();
+        init_gui();
     }        
         
     function animate()
     {
+        requestAnimationFrame( animate );
+        
         if (video.readyState === video.HAVE_ENOUGH_DATA)
         {
             vtexture.needsUpdate = true;
         }
         
-        requestAnimationFrame( animate );
+        material.uniforms.multiplier.value = controls.multiplier;
 
         renderer.render( scene, camera );
     }
@@ -118,5 +141,5 @@
     });
     </script>
 </head>
-<body></body>
+<body style="margin:0"></body>
 </html>
