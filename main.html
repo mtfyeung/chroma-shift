@@ -50,28 +50,63 @@
     var controls;
     var material;
 
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
     function ControlState()
     {
         this.multiplier = 1.0;
-        this.video_source = '';
-    }
-            
+        //this.video_source = '';
+    }      
 
     function init_video()
     {
         video = document.createElement('video');
         video.autoplay = true;
         video.loop = true;
-    
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+             
+        function src_callback(sourceInfos)
+        {
+            var back_cam_id;
 
-        navigator.getUserMedia({video: true}, function(stream){
-          video.src    = window.URL.createObjectURL(stream);
-        }, function(error){
-          console.log("Failed to get a stream due to", error);
-        });
+            for (var i = sourceInfos.length - 1; i >= 0; --i) {
+                var sourceInfo = sourceInfos[i];
+                if (sourceInfo.kind === 'video' && sourceInfo.facing === 'environment')
+                {
+                    back_cam_id = sourceInfo.id;
+                    break;
+                }
+            }
+
+            if (back_cam_id === undefined)
+            {
+                return;
+            }
+
+            navigator.getUserMedia({video: {
+                optional: [{sourceId: back_cam_id}]
+            }}, function(stream){
+                video.src    = window.URL.createObjectURL(stream);
+            }, function(error){
+                console.log("Failed to get a stream due to", error);
+            });
+
+            /*
+            navigator.getUserMedia({video: true}, function(stream){
+              video.src    = window.URL.createObjectURL(stream);
+            }, function(error){
+              console.log("Failed to get a stream due to", error);
+            });
+            */
+        }
         
-        vtexture = new THREE.Texture(video);
+        if (typeof MediaStreamTrack === 'undefined')
+        {
+            // noop
+        }
+        else
+        {
+            MediaStreamTrack.getSources(src_callback);
+        }
     }
        
     function init_renderer()
@@ -89,6 +124,9 @@
         // Initialize Camera
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.z = 300;
+
+        // Update video source
+        vtexture = new THREE.Texture(video);
 
         // Initialize Shaders
         material = new THREE.ShaderMaterial({
@@ -113,40 +151,6 @@
         gui = new dat.GUI();
         
         gui.add(controls, 'multiplier', 0, 5);
-             
-        function src_callback(sourceInfos)
-        {
-            var srcs = [];
-
-            for (var i = 0; i != sourceInfos.length; ++i) {
-                var sourceInfo = sourceInfos[i];
-                if (sourceInfo.kind === 'video')
-                {
-                    srcs.push(sourceInfo.id);
-                    //option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
-                }
-            }
-
-            var vsrc_controlelr = gui.add(controls, 'video_source', srcs);
-            vsrc_controlelr.onChange(function(choice) {
-                navigator.getUserMedia({video: {
-                    optional: [{sourceId: choice}]
-                }}, function(stream){
-                    video.src    = window.URL.createObjectURL(stream);
-                }, function(error){
-                    console.log("Failed to get a stream due to", error);
-                });
-            });                      
-        }
-        
-        if (typeof MediaStreamTrack === 'undefined')
-        {
-            // noop
-        }
-        else
-        {
-            MediaStreamTrack.getSources(src_callback);
-        }
     }
             
         
