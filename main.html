@@ -45,22 +45,9 @@
     <script src="dat.gui.min.js"></script>
 
     <script>
-    var renderer, scene, camera;
-    var video, vtexture;
-    var controls;
-    var material;
-
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-
-    function ControlState()
-    {
-        this.multiplier = 1.0;
-        //this.video_source = '';
-    }      
-
     function init_video()
     {
-        video = document.createElement('video');
+        var video = document.createElement('video');
         video.autoplay = true;
         video.loop = true;
              
@@ -82,6 +69,8 @@
                 return;
             }
 
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
             navigator.getUserMedia({video: {
                 optional: [{sourceId: back_cam_id}]
             }}, function(stream){
@@ -89,14 +78,6 @@
             }, function(error){
                 console.log("Failed to get a stream due to", error);
             });
-
-            /*
-            navigator.getUserMedia({video: true}, function(stream){
-              video.src    = window.URL.createObjectURL(stream);
-            }, function(error){
-              console.log("Failed to get a stream due to", error);
-            });
-            */
         }
         
         if (typeof MediaStreamTrack === 'undefined')
@@ -107,29 +88,53 @@
         {
             MediaStreamTrack.getSources(src_callback);
         }
+
+        return video;
+    }
+
+    function init_gui()
+    {
+        function ControlState()
+        {
+            this.multiplier = 1.0;
+            //this.video_source = '';
+        }      
+
+        controls = new ControlState();
+        gui = new dat.GUI();
+        
+        gui.add(controls, 'multiplier', 0, 5);
+
+        return controls;
     }
        
     function init_renderer()
     {
-        renderer = new THREE.WebGLRenderer();
+        var renderer = new THREE.WebGLRenderer();
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+
+        return renderer;
     }
         
-    function init_contents()
+    function init()
     {
+        var renderer = init_renderer();
+        var video = init_video();
+        var controls = init_gui();
+
         // Initialize Scenes
-        scene = new THREE.Scene();
+        var scene = new THREE.Scene();
 
         // Initialize Camera
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         camera.position.z = 300;
 
         // Update video source
-        vtexture = new THREE.Texture(video);
+        var vtexture = new THREE.Texture(video);
 
         // Initialize Shaders
-        material = new THREE.ShaderMaterial({
+        var material = new THREE.ShaderMaterial({
             uniforms: {
                 texture1: { type: "t", value: vtexture },
                 multiplier : { type: "f", value: 1.0 }},
@@ -142,42 +147,24 @@
         var mesh = new THREE.Mesh( plane, material );
         
         scene.add( mesh );
-    }
 
-
-    function init_gui()
-    {
-        controls = new ControlState();
-        gui = new dat.GUI();
-        
-        gui.add(controls, 'multiplier', 0, 5);
-    }
+        return function()
+        { 
+            requestAnimationFrame( arguments.callee );
             
-        
-    function init()
-    {
-        init_video();        
-        init_renderer();
-        init_contents();
-        init_gui();
-    }        
-        
-    function animate()
-    {
-        requestAnimationFrame( animate );
-        
-        if (video.readyState === video.HAVE_ENOUGH_DATA)
-        {
-            vtexture.needsUpdate = true;
-        }
-        
-        material.uniforms.multiplier.value = controls.multiplier;
+            if (video.readyState === video.HAVE_ENOUGH_DATA)
+            {
+                vtexture.needsUpdate = true;
+            }
+            
+            material.uniforms.multiplier.value = controls.multiplier;
 
-        renderer.render( scene, camera );
+            renderer.render( scene, camera );
+        };
     }
         
 	document.addEventListener("DOMContentLoaded", function(event){
-        init();        
+        var animate = init();        
         animate();
     });
     </script>
