@@ -58,6 +58,7 @@
         var video = document.createElement('video');
         video.autoplay = true;
         video.loop = true;
+        video.mute = true;
              
         function src_callback(sourceInfos)
         {
@@ -80,9 +81,16 @@
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
             navigator.getUserMedia({video: {
+                mandatory: {
+                            maxWidth: window.innerWidth,
+                            maxHeight: window.innerHeight,
+                            minWidth: window.innerWidth,
+                            minHeight: window.innerHeight
+                            },
                 optional: [{sourceId: back_cam_id}]
             }}, function(stream){
                 video.src    = window.URL.createObjectURL(stream);
+                //video.play();
             }, function(error){
                 console.log("Failed to get a stream due to", error);
             });
@@ -130,12 +138,9 @@
         var video = init_video();
         var controls = init_gui();
 
-        // Initialize Scenes
-        var scene = new THREE.Scene();
-
         // Initialize Camera
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.z = 300;
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 99999);
+        camera.position.z = 650;
 
         // Update video source
         var vtexture = new THREE.Texture(video);
@@ -149,10 +154,12 @@
             fragmentShader: document.getElementById('fragmentShader').innerHTML
         });
 
-        // Init Mesh
-        var plane = new THREE.PlaneGeometry(320, 240);
+        //var plane = new THREE.PlaneGeometry(video.videoWidth, video.videoHeight);
+        var plane = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
         var mesh = new THREE.Mesh( plane, material );
-        
+
+        // Initialize scene
+        var scene = new THREE.Scene();
         scene.add( mesh );
 
         return function()
