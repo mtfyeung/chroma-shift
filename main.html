@@ -1,5 +1,13 @@
 <html>
 <head>
+    <meta name="viewport"
+      content="
+        height = device-height,
+        width = device-width,
+        initial-scale = 1.0,
+        minimum-scale = 1.0,
+        maximum-scale = 1.0,
+        user-scalable = no" />
 	<script id="vertexShader" type="x-shader/x-vertex">
     precision highp float;
 
@@ -111,7 +119,6 @@
     function init_renderer()
     {
         var renderer = new THREE.WebGLRenderer();
-        renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
         return renderer;
@@ -159,6 +166,7 @@
             
             material.uniforms.multiplier.value = controls.multiplier;
 
+            renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.render( scene, camera );
         };
     }
