@@ -131,6 +131,20 @@
 
         return renderer;
     }
+
+    function get_cam_pos(fov_deg)
+    {
+        //http://stackoverflow.com/questions/2866350/move-camera-to-fit-3d-scene
+        // in otherwords, use definition of tan()
+        // tan(fov) = opp/adj = h / d
+        // (but fov and h both need to be 1/2)
+
+        var fov_rad = fov_deg * Math.PI / 180;
+
+        var h = Math.max(window.innerWidth, window.innerHeight) / 2;
+
+        return h / Math.tan(fov_rad/2);
+    }
         
     function init()
     {
@@ -140,7 +154,8 @@
 
         // Initialize Camera
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 99999);
-        camera.position.z = 650;
+
+        camera.position.z = get_cam_pos(45);
 
         // Update video source
         var vtexture = new THREE.Texture(video);
