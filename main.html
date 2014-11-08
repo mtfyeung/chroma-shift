@@ -52,6 +52,7 @@
 
     <script src="three.min.js"></script>
     <script src="dat.gui.min.js"></script>
+    <script src="touch.js"></script>
     <script src="main.js"></script>
 
     <style>
@@ -94,8 +95,8 @@
     }
 
     #intro {
-        -webkit-animation: fade 5s;
-        -webkit-animation-delay: 5s;
+        -webkit-animation: fade 2s;
+        -webkit-animation-delay: 4s;
         -webkit-animation-fill-mode:forwards;
 
         animation: fade 5s;
@@ -111,9 +112,7 @@
     </style>
 </head>
 <body>
-    <p id="multiplier" class="ui">
-        1x
-    </p>
+    <p id="multiplier" class="ui" />
     <p id="intro" class="ui">
         swipe up/down to change multipler
     </p>

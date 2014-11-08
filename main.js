@@ -1,3 +1,4 @@
+
 function init_video()
 {
     var video = document.createElement('video');
@@ -18,7 +19,7 @@ function init_video()
             }
         }
 
-        if (back_cam_id === undefined)
+        if (back_cam_id == null)
         {
             return;
         }
@@ -97,6 +98,9 @@ function init()
     var video = init_video();
     var controls = init_gui();
 
+    // Initialize Touch
+    init_touch(renderer.domElement);
+
     // Initialize Camera
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 99999);
 
@@ -131,7 +135,9 @@ function init()
             vtexture.needsUpdate = true;
         }
         
-        material.uniforms.multiplier.value = controls.multiplier;
+        var m = get_curr_multiplier();
+        material.uniforms.multiplier.value = m;
+        document.getElementById('multiplier').innerHTML = "" + m.toFixed(2) + "x";
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render( scene, camera );
