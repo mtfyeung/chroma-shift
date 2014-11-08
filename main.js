@@ -1,4 +1,3 @@
-
 function init_video()
 {
     var video = document.createElement('video');
@@ -53,22 +52,6 @@ function init_video()
 
     return video;
 }
-
-function init_gui()
-{
-    function ControlState()
-    {
-        this.multiplier = 1.0;
-        //this.video_source = '';
-    }      
-
-    controls = new ControlState();
-    gui = new dat.GUI();
-    
-    gui.add(controls, 'multiplier', 0, 5);
-
-    return controls;
-}
    
 function init_renderer()
 {
@@ -96,7 +79,6 @@ function init()
 {
     var renderer = init_renderer();
     var video = init_video();
-    var controls = init_gui();
 
     // Initialize Touch
     init_touch(renderer.domElement);
