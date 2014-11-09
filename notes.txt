@@ -1,6 +1,4 @@
 TODO
-
-- persist multiplier
 - shift other color differences
 - take photo?
 

@@ -74,7 +74,7 @@ function get_cam_pos(fov_deg)
 
     return h / Math.tan(fov_rad/2);
 }
-    
+
 function init()
 {
     var renderer = init_renderer();
@@ -84,9 +84,9 @@ function init()
     init_touch(renderer.domElement);
 
     // Initialize Camera
-    var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 99999);
-
-    camera.position.z = get_cam_pos(45);
+    var cam_fov = 90;
+    var camera = new THREE.PerspectiveCamera(cam_fov, window.innerWidth / window.innerHeight, 1, 99999);
+    camera.position.z = get_cam_pos(cam_fov);
 
     // Update video source
     var vtexture = new THREE.Texture(video);
@@ -111,16 +111,19 @@ function init()
     return function()
     { 
         requestAnimationFrame( arguments.callee );
-        
+
         if (video.readyState === video.HAVE_ENOUGH_DATA)
         {
             vtexture.needsUpdate = true;
         }
-        
+
+        // update multiplier
         var m = get_curr_multiplier();
         material.uniforms.multiplier.value = m;
         document.getElementById('multiplier').innerHTML = "" + m.toFixed(2) + "x";
+        localStorage.x = m;
 
+        // resize renderer if necessary
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.render( scene, camera );
     };

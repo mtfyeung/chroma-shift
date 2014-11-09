@@ -1,4 +1,4 @@
-var multiplier = 0;
+var multiplier;
 var curr_touch;
 var begin_touch;
 
@@ -16,6 +16,8 @@ function get_curr_multiplier()
 
 function init_touch(el)
 {
+	multiplier = localStorage.x == null? 0 : parseFloat(localStorage.x);
+
     el.addEventListener("touchstart", handleStart, false);
     el.addEventListener("touchend", handleEnd, false);
     el.addEventListener("touchcancel", handleEnd, false);
